@@ -1,116 +1,86 @@
-package com.lawliet;
-import java.util.*;
+///////////////////////////////////////////////////////////////
+// @author Mandeep Bisht(L-lawliet07)
+///////////////////////////////////////////////////////////////
 
-import javax.activation.MimetypesFileTypeMap;
-import java.io.*;
+package com.lawliet;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+//import javax.activation.MimetypesFileTypeMap;
 
 public class Server extends NanoHTTPD {
 
 
-    public Server() {
-        super(8080);
+	private ConcurrentHashMap<String,Integer> priority;
+	File folder = new File(Main.path + "Sync");
+	public Server() {
+        super(Main.PORT);
+        priority = new ConcurrentHashMap<>();
+        // Higher the value Higher the priority.
+        priority.put("txt",9);
+        priority.put("jpeg",8);
+        priority.put("png",8);
+        priority.put("jpg",8);
+        priority.put("mp3",6);
+        priority.put("mp4",5);
+        priority.put("pdf",7);
     }
     
-    @SuppressWarnings("deprecation")
+    private String getExtension(String fileName){
+        int lastIndex = fileName.lastIndexOf(".");
+        if(lastIndex != -1 && lastIndex != 0){
+        	return fileName.substring(fileName.lastIndexOf(".")+1);
+        }
+        else return "";
+    }
+    
+    int getPriority(String filename){
+        String extension = getExtension(filename);
+        int priority_value = priority.get(extension)==null?1:priority.get(extension);
+        return priority_value;
+    }
+    
+//    @SuppressWarnings("deprecation")
 	public Response serve(String uri, Method method,
                           Map<String, String> header, Map<String, String> parameters,
                           Map<String, String> files) {
 
-        File folder = new File("./Downloads/");
-
-
-        Map<Integer, List<String>> prio = new HashMap<>();
-        List<String> list1 = new ArrayList<>();
-        List<String> list2 = new ArrayList<>();
-        List<String> list3 = new ArrayList<>();
-        List<String> list4 = new ArrayList<>();
-        List<String> list5 = new ArrayList<>();
-
-
+    	
+    	
+    	ArrayList<String> list = new ArrayList<>();
         for (File file : folder.listFiles()) {
-            //System.out.println(file.getName());
-
-            if (GetFileExtension.getFileExtension(file).equals("txt")) {
-                list1.add(file.getName());
-                prio.put(new Integer(1), list1);
-
-            }
-
-            if (GetFileExtension.getFileExtension(file).equals("pdf")) {
-                list2.add(file.getName());
-                prio.put(new Integer(2), list2);
-            }
-
-            if (GetFileExtension.getFileExtension(file).equals("jpg")||GetFileExtension.getFileExtension(file).equals("png") || GetFileExtension.getFileExtension(file).equals("jpeg"))
-            {     list3.add(file.getName());
-                prio.put(new Integer(3), list3);
-            }
-
-            if (GetFileExtension.getFileExtension(file).equals("mp3")) {
-                list4.add(file.getName());
-                prio.put(new Integer(4), list4);
-            }
-
-            if (GetFileExtension.getFileExtension(file).equals("mp4")) {
-                list5.add(file.getName());
-                prio.put(new Integer(5), list5);
-            }
+        	list.add(file.getName());
         }
-
-        String filename = "";
-
-        //TO CREATE THE WEBPAGE
+        Collections.sort(list, ( left, right ) -> {
+        	Integer lhs = getPriority((String)left);
+            Integer rhs = getPriority((String)right);
+            return lhs.compareTo(rhs);
+        } );
         if (uri.equals("/")) {
-           // System.out.println(uri);
-
-            String st = "";
-            String x = "";
-
-            for (Map.Entry<Integer, List<String>> en : prio.entrySet()) {
-                for (String obj : en.getValue()) {
-                    st = st + "<a href=\"/get?name=" + obj + "\">" + obj + "</a><br>";
-                }
+            String html = "";
+            for (String fileName : list) {
+                html = html + "<a href=\"/get?name=" + fileName + "\">" + fileName + "</a><br>";
             }
+            return new NanoHTTPD.Response(Response.Status.OK, MIME_HTML, html);
+        } else if (uri.equals("/get")) {
 
-
-            return new Response(Response.Status.OK, MIME_HTML, st);
-
-
-        }
-
-        //TO DOWNLOAD
-        else if (uri.equals("/get"))
-
-        {
-//            System.out.println(uri);
-//            String x = header.get("referer");
-//            System.out.println("THE REFERER"+x);
-
-
-            FileInputStream fis = null;
-            File f = null;
+            FileInputStream fileInputStream = null;
+            File file = null;
             try {
-                f = new File("./Downloads/" + parameters.get("name")); //path exists and its correct
-                fis = new FileInputStream(f);
+                file = new File(this.folder +"/"+ parameters.get("name"));
+                
+                fileInputStream = new FileInputStream(file);
+                return new NanoHTTPD.Response(Response.Status.OK, "application/octet-stream", fileInputStream);
             } catch (FileNotFoundException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
-
-            MimetypesFileTypeMap mimeTypesMap = new MimetypesFileTypeMap();
-
-            String mimeType = mimeTypesMap.getContentType(filename);
-            return new NanoHTTPD.Response(Response.Status.OK, mimeType, fis);
-
-
-        }
-
-
-
-
-        else {
-//            System.out.println(uri);
-
+            return new NanoHTTPD.Response("404 File Not Found");
+        } else {
             return new NanoHTTPD.Response("404 File Not Found");
         }
 

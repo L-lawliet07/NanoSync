@@ -1,58 +1,69 @@
+///////////////////////////////////////////////////////////////
+// @author Mandeep Bisht(L-lawliet07) /////////////////////////
+///////////////////////////////////////////////////////////////
+
 package com.lawliet;
-import java.io.*;
+import java.io.IOException;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.MalformedURLException;
 
-public class Download implements Runnable{
+// Download: This module will download the  
+public class Download implements Runnable {
 
-    String link;
-    File out;
-
-    public Download(String link, File out)
-    {
-        this.link=link;
-        this.out=out;
+    private String link;
+    private File file;
+    
+    public Download(String link, File file) {
+        this.link = link;
+        this.file = file;
     }
     
-    //@RequiresApi(api = Build.VERSION_CODES.N)
     @Override
-
-    public void run() 
-    {
-       try {
-
-           URL url = new URL(link);
-           HttpURLConnection http = (HttpURLConnection)url.openConnection();
-           BufferedInputStream in = new BufferedInputStream(http.getInputStream());
-           FileOutputStream fos;
-            //to resume download
-           if(out.exists())
-               fos = new FileOutputStream(out,true); //makes the stream append if the file exists
-           else{
-               fos = new FileOutputStream(out); //creates a new file.
-           }
-           in.skip(out.length());
-           BufferedOutputStream bout = new BufferedOutputStream(fos,1024);
-           byte[] buffer = new byte[1024];
-           double downloaded = 0.0;
-           int read = 0;
-          // double perecentdownloaded =0.0;
-           while((read = in.read(buffer,0,1024)) >=0)
-                   {
-                       bout.write(buffer,0,read);
-                       downloaded+= read;
-
-                   }
-            bout.close();
-            in.close();
-            System.out.println("Work Done");
-           }
-
-       catch(Exception ex)
-           {
-             // ex.printStackTrace();
-           }
-                 
-
+    public void run() {
+    	BufferedInputStream bufferedInputStream = null;
+       	BufferedOutputStream bufferedOutputStream = null;
+        FileOutputStream fileOutputStream = null;
+        try {
+        	URL url = new URL(link);
+        	HttpURLConnection http = (HttpURLConnection)url.openConnection();
+           	bufferedInputStream = new BufferedInputStream(http.getInputStream());
+           	fileOutputStream = null;
+           	if(file.exists())
+        	   fileOutputStream = new FileOutputStream(file,true);
+           	else{
+        	   fileOutputStream = new FileOutputStream(file);
+           	}
+           	bufferedInputStream.skip(file.length());
+           	bufferedOutputStream = new BufferedOutputStream(fileOutputStream,1024);
+           	byte[] buffer = new byte[1024];
+           	int read = 0;
+           	while((read = bufferedInputStream.read(buffer,0,1024)) >=0) {
+        	   bufferedOutputStream.write(buffer,0,read);
+           	}
+           	bufferedOutputStream.close();
+           	bufferedOutputStream.close();
+       } catch (MalformedURLException e) {
+            e.printStackTrace();
+       } catch ( IOException e ) {
+           e.printStackTrace();
+       } catch ( Exception e ) {
+           e.printStackTrace();
+       } finally {
+    	   if ( bufferedInputStream != null ) {
+    		   try {
+    			   bufferedInputStream.close();
+    		   } catch ( IOException e ) {}
+    	   }
+    	   if ( bufferedOutputStream != null ) {
+    		   try {
+    			   bufferedOutputStream.close();
+    		   } catch ( IOException e ) {}
+    	   }
+       }
     }
 }
