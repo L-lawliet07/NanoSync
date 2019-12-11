@@ -2,6 +2,10 @@
 // @author Mandeep Bisht(L-lawliet07) /////////////////////////
 ///////////////////////////////////////////////////////////////
 
+/*
+ * Discoverer : Discoverer Module is used to discover nodes within a network.
+ */
+
 package com.lawliet;
 
 import java.io.IOException;
@@ -23,7 +27,7 @@ public class Discoverer {
     private BroadcastSender broadcastSender = null;
     private BroadcastReceiver broadcastReceiver = null;
     final private Thread[] thread = new Thread[2];
-
+        
     public Discoverer(String peerId,String broadcastAddress,int port) {
         this.PEER_ID = peerId;
         this.BROADCAST_ADDRESS = broadcastAddress;
@@ -37,7 +41,6 @@ public class Discoverer {
         return connectedPeerInfo;
     }
 
-    //Function to start Broadcast_Sender thread.
     void startBroadcastSender() {
         if(!broadcastSender.isRunning) {
             thread[0] = new Thread(broadcastSender);
@@ -45,7 +48,6 @@ public class Discoverer {
         }
     }
 
-    //Function to start Broadcast_Receiver thread.
     void startBroadcastReceiver() {
         if(!broadcastReceiver.isRunning) {
             thread[1] = new Thread(broadcastReceiver);
@@ -53,34 +55,33 @@ public class Discoverer {
         }
     }
 
-    //Function to stop Broadcast_Sender thread.
     void stopBroadcastSender() {
         broadcastSender.stop();
     }
 
-    //Function to stop Broadcast_Receiver thread.
     void stopBroadcastReceiver() {
         broadcastReceiver.stop();
     }
 
-    //Function to start Discoverer thread.
     void startDiscoverer() {
         startBroadcastSender();
         startBroadcastReceiver();
         if ( Main.env == "development" ) {
-//            Logger.write("[STARTED] : Discoverer started");
+            Logger.write("[STARTED] : Discoverer started");
         }
     }
 
-    //Function to start Discoverer thread.
     void stopDiscoverer() {
         stopBroadcastSender();
         stopBroadcastReceiver();
         if ( Main.env == "development" ) {
-//            Logger.write("[STOPED] : Discoverer stoped");
+            Logger.write("[STOPED] : Discoverer stoped");
         }
     }
-
+    
+    /*
+     * BroadcastSender : The broadcast sender sends a broadcast packet every 5 seconds. 
+     */
     class BroadcastSender implements Runnable {
 
         volatile boolean exit;
@@ -127,6 +128,9 @@ public class Discoverer {
         }
     }
 
+    /*
+     * BroadcastReceiver : The broadcast receiver receives broadcast packets from nearby nodes and stores their information in a hashmap.
+     */
     class BroadcastReceiver implements Runnable {
 
         volatile boolean exit;
@@ -153,7 +157,7 @@ public class Discoverer {
                         String peerName = new String(datagramPacket.getData(),0, datagramPacket.getLength());
                         if((peerName.compareTo(PEER_ID)!=0) && (!connectedPeerInfo.contains(datagramPacket.getAddress()))) {
                             if ( Main.env == "development" ) {
-//                                Logger.write("[CONNECTED] : "+datagramPacket.getAddress());
+                                Logger.write("[CONNECTED] : "+datagramPacket.getAddress());
                             }
                             connectedPeerInfo.put(peerName, datagramPacket.getAddress());
                             new Thread(new Receiver(datagramPacket.getAddress(), peerName));

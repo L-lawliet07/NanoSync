@@ -80,7 +80,7 @@ public class Receiver implements Runnable{
 //        }
         for ( String fileName : collection ) {
             String fileUrl = "http:/" + this.ip + ":" + Main.PORT +"/get?name=" + fileName;
-            new Thread( new Download(fileUrl, new File(Main.path + fileName)) ).start();
+            new Thread( new Downloader(fileUrl, new File(Main.path + fileName)) ).start();
         }
         Discoverer.connectedPeerInfo.remove(peerId);
    }

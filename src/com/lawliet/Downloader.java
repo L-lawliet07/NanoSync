@@ -12,13 +12,15 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.MalformedURLException;
 
-// Download: This module will download the  
-public class Download implements Runnable {
+/*
+ * Downloader module : The downloader module is used to download data from the connected stream.
+ */
+public class Downloader implements Runnable {
 
     private String link;
     private File file;
     
-    public Download(String link, File file) {
+    public Downloader(String link, File file) {
         this.link = link;
         this.file = file;
     }

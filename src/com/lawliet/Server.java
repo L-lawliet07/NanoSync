@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////
-// @author Mandeep Bisht(L-lawliet07)
+// @author Mandeep Bisht(L-lawliet07) /////////////////////////
 ///////////////////////////////////////////////////////////////
 
 package com.lawliet;
@@ -11,7 +11,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-//import javax.activation.MimetypesFileTypeMap;
+//Server Module : Server
 
 public class Server extends NanoHTTPD {
 
