@@ -10,38 +10,21 @@ import java.util.Scanner;
 
 //java -jar nanohttp <PEER_ID> <ABSOLUTE_PATH_TO_WORKING_FOLDER_WITH_TRAILING_SLASH> <BROADCAST_IP> <PORT> <MODE(production/development)>
 
+
+/**************************************************************
+ * Main: main is an entry point of the program
+ */
 public class Main {
 	
 	static Scanner scan = new Scanner(System.in);
-	static String env = "development"; // environment 
-	static String path = "/home/lawliet/Desktop/check/working/"; // working path location
+	static String env = ""; // environment 
+	static String path = ""; // working path location
 	final static int PORT = 8080; // port number to start http server 
 	public static void main(String[] args) {
 
-		String peerId = "default"; // unique peer id 
-		String broadcastIp = "192.168.43.255"; // broadcast ip of the network
-		int port = 7777;
-		if ( args.length < 2 ) {
-//			System.out.println("Enter Peer Id : ");
-//			peerId = scan.nextLine();
-//			System.out.println("[DEBUG] : " + peerId);
-//			System.out.println("Enter Absolute Path to working folder <WITH TRAILING SLASH> : ");
-//			Main.path = scan.nextLine();
-//			System.out.println("[DEBUG] : " + Main.path);
-//			System.out.println("Enter Broadcast IP : ");
-//			broadcastIp = scan.nextLine();
-//			System.out.println("[DEBUG] : " + broadcastIp);
-//			System.out.println("Enter Port Number (except 8080) : ");
-//			port = Integer.parseInt(scan.nextLine());
-//			System.out.println("[DEBUG] : " + port);
-//			System.out.println("Enter mode(development or production) : ");
-//			env = scan.nextLine();
-//			System.out.println("[DEBUG] : " + env);
-//			if ( ! env.equals("development") && ! env.equals("production") ) {
-//				System.out.println("Mode can only be (development or production)");
-//				return;
-//			}
-		}
+		String peerId = ""; // unique peer id 
+		String broadcastIp = ""; // broadcast ip of the network
+		int port;
 
 		if ( args.length == 5 ) {
 			
@@ -58,7 +41,7 @@ public class Main {
 			port = Integer.parseInt(args[3]);
 			
 			// fifth argument will be for environment
-			if ( ! args[4].equals("development") || ! args[4].equals("production") ) {
+			if ( ! args[4].equals("development") && ! args[4].equals("production") ) {
 				System.out.println("Mode can only be (development or production)");
 				return;
 			}
@@ -66,6 +49,7 @@ public class Main {
 			env = args[4];
 		} else {
 			System.out.println("java -jar nanohttp <PEER_ID> <ABSOLUTE_PATH_TO_WORKING_FOLDER_WITH_TRAILING_SLASH> <BROADCAST_IP> <PORT> <MODE(production/development)>");
+			return;
 		}
 
 		File syncDir = new File(Main.path + "Sync");
@@ -74,7 +58,7 @@ public class Main {
 			syncDir.mkdir();
 		}
 
-		// Starting logger modul
+		// Starting logger module
 		new Logger();
 		
 		// Creating Discoverer object
@@ -90,10 +74,7 @@ public class Main {
 			e.printStackTrace();
 		}
 
-		// Logging to console only if running in development environment
-		if ( Main.env.equals("development") ) {
-			System.out.println("[SERVER STARTED] : Press Enter To Stop");
-		}
+		System.out.println("[SERVER STARTED] : Press Enter To Stop");
 
 		// starting discoverer module
 		d.startDiscoverer(); 
@@ -106,10 +87,7 @@ public class Main {
 		// stoping discoverer module
 		d.stopDiscoverer();
 		
-		// Logging to console only if running in development environment
-		if ( Main.env.equals("development") ) {
-			System.out.println("[SERVER STOPED]");
-		}
+		System.out.println("[SERVER STOPED]");
 		scan.close();
 	}
 }

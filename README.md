@@ -1,10 +1,10 @@
 
 
-<div style="text-align:center">
+<p align = 'center'>
 
-![logo](./asset/images/logo.png)
+<img src='./asset/images/logo.png'>
 
-</div>
+</p>
 
 ---
 
@@ -49,11 +49,11 @@ NanoHttpd is an open-source, small-footprint web server that is suitable for emb
 
 ## Diagrammatic representation
 
-<div style="text-align:center">
+<p align = 'center'>
 
-![logo](./asset/images/diagram.png)
+<img src='./asset/images/diagram.png'>
 
-</div>
+</p>
 
 ---
 * ##### Main : 
