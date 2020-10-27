@@ -2,10 +2,6 @@
 // @author Mandeep Bisht(L-lawliet07) /////////////////////////
 ///////////////////////////////////////////////////////////////
 
-/*
- * Logger Module : The logger module will log important information and events is a CSV file.
- */
-
 package com.lawliet;
 
 import java.io.FileWriter;
@@ -14,9 +10,14 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.io.File;
 
+/*
+ * Logger Module : The logger module will log important information and events is a CSV file.
+ */
+
 public class Logger {
 	
 	static FileWriter logFileWriter = null;
+	// Initializing variables
 	Logger() {
 		try {
 			String logFilename = "Log_" + new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date()) +".csv";
@@ -30,6 +31,7 @@ public class Logger {
 		}
 	}
 	
+	// This static method will provide interface to write info to logfile
 	public static synchronized void write(String logMsg) {
 		
 		String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date());

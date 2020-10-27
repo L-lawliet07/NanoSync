@@ -7,18 +7,19 @@ package com.lawliet;
 import java.io.File;
 import java.io.IOException;
 import java.util.Scanner;
+
 //java -jar nanohttp <PEER_ID> <ABSOLUTE_PATH_TO_WORKING_FOLDER_WITH_TRAILING_SLASH> <BROADCAST_IP> <PORT> <MODE(production/development)>
 
 public class Main {
 	
 	static Scanner scan = new Scanner(System.in);
-	static String env = "production";
-	static String path = "/home/lawliet/Desktop/working/";
-	final static int PORT = 8081;
+	static String env = "development"; // environment 
+	static String path = "/home/lawliet/Desktop/check/working/"; // working path location
+	final static int PORT = 8080; // port number to start http server 
 	public static void main(String[] args) {
 
-		String peerId = "default";
-		String broadcastIp = "192.168.0.255";
+		String peerId = "default"; // unique peer id 
+		String broadcastIp = "192.168.43.255"; // broadcast ip of the network
 		int port = 7777;
 		if ( args.length < 2 ) {
 //			System.out.println("Enter Peer Id : ");
@@ -41,43 +42,74 @@ public class Main {
 //				return;
 //			}
 		}
-		if ( args.length >= 2 ) {
+
+		if ( args.length == 5 ) {
+			
+			// first argument will be peer id
 			peerId = args[0];
+
+			// second argument will be path to working directory
 			Main.path = args[1];
-		}
-		if ( args.length >= 3 ) {
+
+			// third argument will be broadcast ip
 			broadcastIp = args[2];
-		}
-		if ( args.length >= 4 ) {
+
+			// fourth argument will be port number for broadcast sender
 			port = Integer.parseInt(args[3]);
-		}
-		if ( args.length >= 5 ) {
+			
+			// fifth argument will be for environment
 			if ( ! args[4].equals("development") || ! args[4].equals("production") ) {
 				System.out.println("Mode can only be (development or production)");
 				return;
 			}
+
 			env = args[4];
+		} else {
+			System.out.println("java -jar nanohttp <PEER_ID> <ABSOLUTE_PATH_TO_WORKING_FOLDER_WITH_TRAILING_SLASH> <BROADCAST_IP> <PORT> <MODE(production/development)>");
 		}
-		
+
 		File syncDir = new File(Main.path + "Sync");
+		// if sync file is not present in working directory program will create one.
 		if ( !syncDir.exists() ) {
 			syncDir.mkdir();
 		}
+
+		// Starting logger modul
 		new Logger();
+		
+		// Creating Discoverer object
 		Discoverer d=new Discoverer(peerId,broadcastIp,port);
+		
+		// Creating server object
 		Server server = new Server();
 		
 		try {
+			// starting server
 			server.start();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		System.out.println("[SERVER STARTED] : Press Enter To Stop");
+
+		// Logging to console only if running in development environment
+		if ( Main.env.equals("development") ) {
+			System.out.println("[SERVER STARTED] : Press Enter To Stop");
+		}
+
+		// starting discoverer module
 		d.startDiscoverer(); 
+		
 		scan.nextLine();
+		
+		// stoping server module
 		server.stop();
-		System.out.println("[SERVER STOPED]");
+
+		// stoping discoverer module
 		d.stopDiscoverer();
+		
+		// Logging to console only if running in development environment
+		if ( Main.env.equals("development") ) {
+			System.out.println("[SERVER STOPED]");
+		}
 		scan.close();
 	}
 }
