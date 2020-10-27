@@ -10,11 +10,11 @@
 
 # NanoSync
 
-NanoSync priority-based data sharing java application which lets us share data between multiple nodes simultaneously using NanoHttpd.
+NanoSync is a priority-based data sharing java application which lets us share data between multiple nodes simultaneously using NanoHttpd.
 Priorities are based on the type of file.
 
 ## NanoHttp
-NanoHttpd is an open-source, small-footprint web server that is suitable for embedding in applications, written in the Java programming language. The source code consists of a single .java file. It can be used as a library component in developing other software (such as measurement,[1] science,[2] and database[3] applications) or as a standalone ad-hoc style HTTP daemon for serving files. [source:wiki]
+NanoHttpd is an open-source, small-footprint web server that is suitable for embedding in applications, written in the Java programming language. The source code consists of a single .java file. It can be used as a library component in developing other software (such as measurement, science and database applications) or as a standalone ad-hoc style HTTP daemon for serving files. [source:wiki]
 
 
 #### Why Nanohttp?
@@ -76,5 +76,4 @@ NanoHttpd is an open-source, small-footprint web server that is suitable for emb
 * ##### Downloader :
     Downloader module will make a get request to download the file.
 ---
-
 
